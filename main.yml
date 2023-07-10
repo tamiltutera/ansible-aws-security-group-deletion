@@ -1,0 +1,26 @@
+---
+- name: Manage AWS Security Groups
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - secrets.yml
+  vars:
+    region: "us-east-1"
+    security_group_name: "tamil-security-group"
+    vpc_id: "vpc-03ea4b3e44d7bf10f"
+  tasks:
+    - name: Deleting Security Group
+      ec2_group:
+        name: "{{ security_group_name }}"
+        description: "Creating group name for ec2 instances"
+        vpc_id: "{{ vpc_id }}"
+        region: "{{ region }}"
+        state: absent
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+      register: ec2_del_sgrp
+    - debug:
+        msg: "{{ ec2_del_sgrp }}"
+    - debug:
+        msg: "{{ security_group_name }} deleted successfully"
+      when: ec2_del_sgrp.changed
